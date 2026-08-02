@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Media Download Terminal</title>
+<style>
+/* Forces the mobile browser to allow the default pull-down-to-refresh swipe gesture */
+html, body {
+    overscroll-behavior-y: auto !important;
+    overflow-y: auto !important;
+    height: 100%;
+}
+
+body {
+font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; 
+background-color: #f4f4f9; 
+text-align: center;
+padding: 15px; 
+color: #333; 
+}
+.container { 
+max-width: 500px; 
+margin: 20px auto; 
+background: white; 
+padding: 25px; 
+border-radius: 16px; 
+box-shadow: 0 4px 20px rgba(0,0,0,0.06); 
+}
+h2 { 
+color: #ff0000;
+margin-bottom: 5px; 
+font-size: 24px; 
+}
+input[type="text"] {
+width: 90%; 
+padding: 12px; 
+margin-bottom: 15px; 
+border: 2px solid #e2e8f0; 
+border-radius: 8px; 
+font-size: 16px;
+outline: none; 
+}
+.main-btn { 
+width: 96%; 
+padding: 12px; 
+background-color: #ff0000;
+color: white; 
+border: none; 
+border-radius: 8px; 
+cursor: pointer; 
+font-size: 16px; 
+font-weight: bold; 
+}
+.error { 
+color: #cc0000; 
+background: #ffe6e6; 
+padding: 10px;
+border-radius: 8px; 
+margin-top: 20px; 
+font-weight: 500; 
+text-align: left;
+}
+.result-card { 
+margin-top: 25px; 
+text-align: left; 
+border-top: 2px solid #edf2f7; 
+padding-top: 20px; 
+}
+.result-card h3 { 
+font-size: 18px; 
+margin-bottom: 12px; 
+color: #1a202c; 
+border-left: 4px solid #ff0000; 
+padding-left: 10px; 
+}
+.thumbnail { 
+width: 100%; 
+border-radius: 10px;
+box-shadow: 0 4px 10px rgba(0,0,0,0.08); 
+margin-bottom: 15px; 
+display: block; 
+}
+select { 
+width: 100%; 
+padding: 12px; 
+margin-bottom: 15px; 
+border: 2px solid #cbd5e1; 
+border-radius: 8px;
+font-size: 16px; 
+background: white;
+outline: none; 
+}
+.native-download-btn { 
+width: 100%; 
+padding: 14px; 
+background-color: #00875a; 
+color: white; 
+border: none; 
+border-radius: 8px; 
+font-size: 16px; 
+font-weight: bold; 
+cursor: pointer; 
+display: flex; 
+align-items: center;
+justify-content: center; 
+gap: 8px; 
+}
+.live-warning-badge { 
+background: #ffe6e6;
+border: 1px solid #fca5a5; 
+padding: 10px; 
+border-radius: 8px; 
+color: #ff0000; 
+font-size: 13px; 
+font-weight: bold; 
+margin-bottom: 15px; 
+}
+.progress-box { 
+display: none; 
+margin-top: 20px; 
+background: #f1f5f9; 
+padding: 15px; 
+border-radius: 10px; 
+border: 1px solid #e2e8f0; 
+}
+.progress-status-text { 
+font-size: 13px; 
+font-weight: 600; 
+color: #475569; 
+margin-bottom: 8px; 
+display: block; 
+}
+.progress-bar-bg { 
+width: 100%; 
+height: 12px; 
+background: #cbd5e1;
+border-radius: 6px; 
+overflow: hidden; 
+position: relative; 
+}
+.progress-bar-fill { 
+width: 0%; 
+height: 100%; 
+background: linear-gradient(90deg, #34d399, #059669); 
+border-radius: 6px; 
+transition: width 0.3s ease; 
+}
+.history-section { 
+margin-top: 35px; 
+text-align: left; 
+border-top: 2px dashed #e2e8f0; 
+padding-top: 20px;
+}
+.history-header-row { 
+display: flex; 
+align-items: center; 
+justify-content: space-between; 
+margin-bottom: 15px;
+}
+.history-section h4 { 
+color: #4a5568; 
+margin: 0; 
+font-size: 16px;
+text-transform: uppercase; 
+}
+.clear-btn { 
+background: #f1f5f9; 
+color: #64748b; 
+border: 1px solid #cbd5e1; 
+padding: 6px 12px; 
+border-radius: 6px; 
+font-size: 12px;
+font-weight: bold; 
+cursor: pointer; 
+transition: 0.2s; 
+}
+.clear-btn:hover { 
+background: #ffe6e6;
+color: #ff0000; 
+border-color: #fca5a5; 
+}
+.history-item { 
+display: flex;
+align-items: center; 
+background: #f8fafc; 
+padding: 12px; 
+border-radius: 8px; 
+margin-bottom: 10px; 
+border: 1px solid #edf2f7; 
+}
+.history-thumb { 
+width: 80px; 
+height: 50px; 
+object-fit: cover;
+border-radius: 4px; 
+margin-right: 15px; 
+background: #e2e8f0; 
+}
+.history-details { 
+flex: 1; 
+min-width: 0; 
+}
+.history-details h5 { 
+margin: 0 0 2px 0; 
+font-size: 14px; 
+color: #2d3748; 
+white-space: nowrap; 
+overflow: hidden; 
+text-overflow: ellipsis; 
+}
+.history-details p { 
+margin: 0;
+font-size: 12px; 
+color: #a0aec0; 
+}
+</style>
+</head>
+<body>
+<div class="container">
+<h2>Media Download Terminal</h2>
+<p style="color: #718096; font-size: 14px; margin-bottom: 20px;">
+Analyze and save videos straight to your local system device storage.
+</p>
+
+<!-- Kept as method="POST" so your Python side remains unchanged -->
+<form action="/" method="POST">
+<input type="text" name="video_url" placeholder="Paste video link here..." required>
+<br>
+<button class="main-btn" type="submit">Verify Video Link</button>
+</form>
+
+{% if error %}
+<p class="error">&#9888; {{ error }}</p>
+{% endif %}
+
+{% if data %}
+<div class="result-card">
+<h3>{{ data.title }}</h3>
+
+{% if data.local_thumb %}
+<img class="thumbnail" src="/local-thumbs/{{ data.local_thumb }}" alt="Thumbnail">
+{% endif %}
+
+{% if data.is_live %}
+<div class="live-warning-badge">
+&#9888; ALERT: This is a Live Stream Broadcast recording!
+</div>
+{% endif %}
+
+<form action="/download" method="POST" id="downloadForm">
+<input type="hidden" name="video_url" value="{{ data.original_url }}">
+<input type="hidden" name="is_live_flag" value="{{ data.is_live }}">
+<label style="font-size: 14px; font-weight: bold; color: #4a5568; display: block; margin-bottom: 5px;">
+Select Video Quality:
+</label>
+<select name="quality">
+<option value="720">High Quality (720p MP4) - [ Size: {{ data.size_720 }} ]</option>
+<option value="360">Standard Quality (360p MP4) - [ Size: {{ data.size_360 }} ]</option>
+</select>
+<button type="submit" class="native-download-btn" id="dlBtn">
+<span>
+{% if data.is_live %}Record Live Stream Broadcast{% else %}Start Direct File Download{% endif %}
+</span>
+</button>
+</form>
+
+<div class="progress-box" id="progBox">
+<span class="progress-status-text" id="progStatus">Connecting to Termux download core...</span>
+<div class="progress-bar-bg">
+<div class="progress-bar-fill" id="progFill"></div>
+</div>
+</div>
+</div>
+{% endif %}
+
+<div id="historyWrapper">
+{% if history %}
+<div class="history-section">
+<div class="history-header-row">
+<h4>Recent Downloads Log (SQL)</h4>
+<button type="button" class="clear-btn" id="clearLogBtn">Clear Logs</button>
+</div>
+<div id="historyItemsContainer">
+{% for item in history %}
+<div class="history-item">
+{% if item.local_thumb %}
+<img class="history-thumb" src="/local-thumbs/{{ item.local_thumb }}" alt="Thumb">
+{% else %}
+<div style="width: 80px; height: 50px; background: #e2e8f0; border-radius: 4px; margin-right: 15px;"></div>
+{% endif %}
+<div class="history-details">
+<h5>{{ item.title }}</h5>
+<p>Video ID: {{ item.id }}</p>
+</div>
+</div>
+{% endfor %}
+</div>
+</div>
+{% endif %}
+</div>
+</div>
+
+<script>
+// FIXES PULL-TO-REFRESH DIALOG POPUP:
+// Clears browser state history to redirect back to clean home on swipe-down
+if (window.history.replaceState) {
+    window.history.replaceState(null, null, window.location.href);
+}
+
+// Intercepts pull down and forces a clean GET refresh layout
+window.addEventListener('beforeunload', function() {
+    if (performance.navigation.type === 1) { 
+        window.location.href = '/';
+    }
+});
+
+const form = document.getElementById('downloadForm');
+let eventSource = null;
+let wakeLock = null;
+
+async function requestWakeLock() {
+    try {
+        if ('wakeLock' in navigator) {
+            wakeLock = await navigator.wakeLock.request('screen');
+            console.log('Screen Wake Lock active.');
+        }
+    } catch (err) {
+        console.log(`Wake Lock error: ${err.message}`);
+    }
+}
+
+function releaseWakeLock() {
+    if (wakeLock !== null) {
+        wakeLock.release();
+        wakeLock = null;
+        console.log('Screen Wake Lock released.');
+    }
+}
+
+function startProgressStream() {
+    if (eventSource) {
+        eventSource.close();
+    }
+
+    eventSource = new EventSource('/progress-stream');
+
+    eventSource.onmessage = function(event) {
+        const statusData = JSON.parse(event.data);
+        document.getElementById('progStatus').innerText = statusData.status;
+        document.getElementById('progFill').style.width = statusData.percent + '%';
+
+        if (statusData.status === "Complete!") {
+            eventSource.close();
+            releaseWakeLock();
+        }
+    };
+
+    eventSource.onerror = function() {
+        eventSource.close();
+    };
+}
+
+if(form) {
+    form.addEventListener('submit', function() {
+        document.getElementById('dlBtn').style.display = 'none';
+        document.getElementById('progBox').style.display = 'block';
+        requestWakeLock();
+
+        setTimeout(function() {
+            startProgressStream();
+        }, 500);
+    });
+}
+
+function handleWakeUpRefresh() {
+    const progBox = document.getElementById('progBox');
+    if (progBox && progBox.style.display === 'block') {
+        const currentStatus = document.getElementById('progStatus').innerText;
+        if (currentStatus !== "Complete!") {
+            console.log('Tab focused/woken up. Reconnecting progress stream...');
+            startProgressStream();
+            requestWakeLock();
+        }
+    }
+}
+
+window.addEventListener('focus', handleWakeUpRefresh);
+document.addEventListener('visibilitychange', function() {
+    if (document.visibilityState === 'visible') {
+        handleWakeUpRefresh();
+    }
+});
+
+const clearBtn = document.getElementById('clearLogBtn');
+if (clearBtn) {
+    clearBtn.addEventListener('click', function() {
+        fetch('/clear-history', { method: 'POST' })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const wrapper = document.getElementById('historyWrapper');
+                wrapper.style.transition = 'opacity 0.3s ease';
+                wrapper.style.opacity = '0';
+                setTimeout(() => { wrapper.innerHTML = ''; }, 300);
+            }
+        })
+        .catch(err => console.log('Error clearing logs:', err));
+    });
+}
+</script>
+</body>
+</html>
