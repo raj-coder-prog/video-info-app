@@ -243,7 +243,7 @@ def download_video():
         files=sorted([os.path.join(DOWNLOAD_FOLDER,f) for f in os.listdir(DOWNLOAD_FOLDER)], key=os.path.getmtime)
         return send_file(files[-1], as_attachment=True)
     except Exception as e:
-        CURRENT_PERCENT = "0"
+        init_db()
         CURRENT_STATUS = "Error crashed pipeline connection."
         return f"<body style='font-family: sans-serif; padding: 30px;'><h1>Download Pipeline Blocked</h1><p>{str(e)}</p><br><a href='/'>Go Back</a></body>"
 
