@@ -35,6 +35,8 @@ def init_db():
     conn.commit()
     conn.close()
 
+init_db()
+
 def extract_video_id(url):
     pattern = r'(?:v=|\/v\/|embed\/|youtu\.be\/|\/shorts\/|\/live\/)([a-zA-Z0-9_-]{11})'
     match = re.search(pattern, url)
