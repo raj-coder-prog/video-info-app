@@ -244,6 +244,7 @@ def download_video():
         return send_file(files[-1], as_attachment=True)
     except Exception as e:
         init_db()
+        CURRENT_PERCENT = "0"
         CURRENT_STATUS = "Error crashed pipeline connection."
         return f"<body style='font-family: sans-serif; padding: 30px;'><h1>Download Pipeline Blocked</h1><p>{str(e)}</p><br><a href='/'>Go Back</a></body>"
 
