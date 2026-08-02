@@ -8,7 +8,7 @@ import yt_dlp
 
 app = Flask(__name__)
 
-PROJECT_FOLDER = '/storage/emulated/0/video-info-app'
+PROJECT_FOLDER = os.path.dirname(os.path.abspath(__file__))
 DOWNLOAD_FOLDER = os.path.join(PROJECT_FOLDER, 'Download Files')
 THUMB_FOLDER = os.path.join(PROJECT_FOLDER, 'Thumbnails')
 
